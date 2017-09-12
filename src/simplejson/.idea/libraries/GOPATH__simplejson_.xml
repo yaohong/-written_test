@@ -1,0 +1,73 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;simplejson&gt;">
+    <CLASSES>
+      <root url="file://F:/OneDrive/go/go_work/src/go_proto.exe" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_server" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_binary" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_server.exe" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_client" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_common" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_proto" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/base" />
+      <root url="file://F:/OneDrive/go/go_work/src/sl" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_interface" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/oss" />
+      <root url="file://F:/OneDrive/go/go_work/src/protoc.exe" />
+      <root url="file://F:/OneDrive/go/go_work/src/compile_proto.bat" />
+      <root url="file://F:/OneDrive/go/go_work/src/go_channel" />
+      <root url="file://$PROJECT_DIR$/../oss" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/csv" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/world_server" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/gsserver" />
+      <root url="file://$PROJECT_DIR$/../github.com" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/MonitorServer" />
+      <root url="file://F:/OneDrive/go/go_work/src/protoc-gen-go.exe" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/rogpeppe/godef/.git" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com/go-sql-driver/MySQL/.git" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com/nsf/gocode/_goremote" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com/nsf/gocode/_gccgo" />
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/golang/lint/testdata" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com/nsf/gocode/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/golang/lint/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/golang/protobuf/protoc-gen-go/testdata" />
+      <root url="file://$PROJECT_DIR$/../github.com/rogpeppe/godef/.git" />
+      <root url="file://$PROJECT_DIR$/../github.com/go-sql-driver/MySQL/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/nsf/gocode/_gccgo" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com/nsf/gocode/_testing" />
+      <root url="file://F:/OneDrive/go/go_work/src/github.com/axgle/mahonia/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/gsserver/.idea" />
+      <root url="file://$PROJECT_DIR$/../oss/.idea" />
+      <root url="file://$PROJECT_DIR$/../github.com/golang/protobuf/proto/testdata" />
+      <root url="file://$PROJECT_DIR$/../github.com/garyburd/redigo/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/nsf/gocode/_goremote" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/golang/protobuf/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/MonitorServer/.idea" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/garyburd/redigo/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/nsf/gocode/_testing" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/rogpeppe/godef/go/printer/testdata" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/axgle/mahonia/.git" />
+      <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/_gccgo" />
+      <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/_goremote" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/oss/.idea" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/golang/protobuf/proto/testdata" />
+      <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/_testing" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/nsf/gocode/.git" />
+      <root url="file://$PROJECT_DIR$/../github.com/rogpeppe/godef/go/printer/testdata" />
+      <root url="file://$PROJECT_DIR$/../github.com/golang/protobuf/protoc-gen-go/testdata" />
+      <root url="file://$PROJECT_DIR$/../github.com/axgle/mahonia/.git" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/world_server/.idea" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com/go-sql-driver/MySQL/.git" />
+      <root url="file://$PROJECT_DIR$/../github.com/golang/lint/testdata" />
+      <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/.git" />
+      <root url="file://$PROJECT_DIR$/../github.com/golang/lint/.git" />
+      <root url="file://$PROJECT_DIR$/../github.com/golang/protobuf/.git" />
+    </excluded>
+  </library>
+</component>
