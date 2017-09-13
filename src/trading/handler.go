@@ -52,7 +52,7 @@ func http_CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("create_user success user_id=%d\n", userId)
 	successJson := simplejson.New()
-	successJson.Set("state", 0)
+	successJson.Set("state", 1)
 
 	dataJson := simplejson.New()
 	dataJson.Set("user_id", userId)
@@ -110,7 +110,7 @@ func http_CreateBorrow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	successJson := simplejson.New()
-	successJson.Set("state", 0)
+	successJson.Set("state", 1)
 
 	successByte , _ := successJson.Encode()
 
@@ -162,7 +162,7 @@ func http_CreateRepay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	successJson := simplejson.New()
-	successJson.Set("state", 0)
+	successJson.Set("state", 1)
 
 	successByte , _ := successJson.Encode()
 
@@ -205,7 +205,7 @@ func http_GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	totalLoan := user.TotalLoan()					//一共借出去的钱
 
 	successJson := simplejson.New()
-	successJson.Set("state", 0)
+	successJson.Set("state", 1)
 
 	dataJson := simplejson.New()
 	dataJson.Set("current_money", currentMoney)
@@ -276,7 +276,7 @@ func http_ViewUserRelation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	successJson := simplejson.New()
-	successJson.Set("state", 0)
+	successJson.Set("state", 1)
 
 	dataJson := simplejson.New()
 	dataJson.Set("borrow_value", borrowValue)

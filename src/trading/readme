@@ -4,25 +4,50 @@
   
   
 接口，所有请求和返回数据都为json 
-   1:	http:121.41.107.94:8889/createUser 
-        功能:创建新角色
-        请求参数:
+1:	http://121.41.107.94:8889/createUser
+    功能:创建新角色
+    请求参数: {"init_money": 1000}
+    返回:
+        成功: {"data":{"user_id":10001}, "state":1}
+        失败: {"state":0,"error":"XXXXXXX"}
+2: 	http://121.41.107.94:8889/createBorrow
+    功能:创建借款
+    请求参数: {"source_id": 10001,"dest_id": 10000,"money": 1500}
+    返回:
+        成功: {"state": 1}
+        失败: {"error":"XXXXXX","state":0}
+3:  http://121.41.107.94:8889/createRepay
+    功能:创建还款
+    请求参数: {"source_id": 10001,"dest_id": 10000,"money": 1500}
+    返回:
+        成功: {"state": 1}
+        失败: {"error":"XXXXXX","state":0}
+4:  http://121.41.107.94:8889/getUserInfo
+    功能: 获取所有的交易信息
+    请求参数: {"user_id": 10001}
+    返回:
+        成功:
+            {
+                "data":
                 {
-	                "init_money": 1000      //初始化的money
-                }
-        返回:
-            成功:
-				{
-					"data":{
-						"user_id":10001
-					},
-                    "state":0
-				}
-             失败:
-			 	{
-					"state":1,
-					"error":"XXXXXXX"
-				}
-	2: 	http:121.41.107.94:8889/createBorrow 
-		
-
+                    "current_money":2000,           //当前剩余的钱
+                    "total_borrow":1000,            //所有借入的钱
+                    "total_loan":0                  //所有借出的钱
+                },
+                "state":1
+            }
+        失败:{"error":"XXXXXX","state":0}
+5:  http://192.168.1.181:8889/viewUserRelation
+    功能: 查看指定用户之前的交易关系
+    请求参数: {"source_id": 10000, "dest_id": 10001}
+    返回:
+        成功:
+            {
+                "data":{
+                    "borrow_value":0,               //source_id向dest_id借入的钱
+                    "loan_value":1000               //source_id给dest_id借出的钱
+                },
+                "state":0
+            }
+        失败:
+            {"error":"XXXXXX","state":0}
