@@ -4,8 +4,7 @@
   
   
 接口，所有请求和返回数据都为json 
-   1：
-        接口:http:121.41.107.94:8889/createUser 
+   1:	http:121.41.107.94:8889/createUser 
         功能:创建新角色
         请求参数:
                 {
@@ -13,16 +12,17 @@
                 }
         返回:
             成功:
-                  {
-                   "data":{
-                      "user_id":10001
-                    },
+				{
+					"data":{
+						"user_id":10001
+					},
                     "state":0
-                  }
+				}
              失败:
-                  {
-                    "state":1,
-                    "error":"XXXXXXX",
-                  }
-
+			 	{
+					"state":1,
+					"error":"XXXXXXX"
+				}
+	2: 	http:121.41.107.94:8889/createBorrow 
+		
 
