@@ -32,17 +32,93 @@ func GetTradingMgr() *TradingMgr {
 	return gTradingMgr
 }
 
+func (self *TradingMgr)LoadAllByDb() error{
+
+	{
+		//加载玩家数据
+		loadUserSql := fmt.Sprintf("select id, money from trading_user")
+		rows1, err := GetDbMgr().GetDbConnect().Query(loadUserSql)
+		if err != nil {
+			return err
+		}
+		defer rows1.Close()
+
+		for rows1.Next() {
+			var id int64
+			var money int32
+			err = rows1.Scan(&id, &money)
+			if err != nil {
+				return err
+			}
+
+			self.allTradingUser[id]  = NewTradingUser(id, money)
+
+		}
+
+	}
+
+	{
+		selectSql := fmt.Sprintf("select source_id,dest_id,amount,oper_type from trading_data")
+		rows, err := GetDbMgr().GetDbConnect().Query(selectSql)
+		if err != nil {
+			return err
+		}
+
+		defer rows.Close()
+
+
+		for rows.Next() {
+			var sourceId int64
+			var destId int64
+			var money int32
+			var operType int32
+			err = rows.Scan(&sourceId, &destId, &money, &operType)
+			if err != nil {
+				return err
+			}
+
+			if operType != ot_borrow && operType != ot_repay {
+				return CreateError("operType error ~p", operType)
+			}
+
+			sourceUser, ok := self.allTradingUser[sourceId]
+			if !ok {
+				return CreateError("sourceId[%d] not exist", sourceId)
+			}
+
+			destUser, ok := self.allTradingUser[destId]
+			if !ok {
+				return CreateError("destId[%d] not exist", sourceId)
+			}
+
+			if operType == ot_borrow {
+				//source向dest借钱
+				sourceUser.AddLoanFromDb(destId, money)
+				destUser.AddBorrowFromDb(sourceId, money)
+			} else {
+				//source向dest还钱
+				sourceUser.AddGiveMoneyToOtherFromDb(destId, money)
+				destUser.AddGaveMeMoneyFromDb(sourceId, money)
+			}
+		}
+	}
+	return nil
+}
+
 
 
 func (self *TradingMgr)GetUser(userId int64) (*TradingUser, bool) {
-	return self.allTradingUser[userId]
+	self.mutex.Lock()
+	defer self.mutex.Unlock()
+	v, ok := self.allTradingUser[userId]
+	return v, ok
 }
 
 
 
 func (self *TradingMgr)CreateUser(initMoney int32) (int64, error) {
 	if initMoney < 0 {
-		return 0, CreateError("initMoney[%d] exeption", initMoney)
+		return 0, CreateError("initMoney[%d] exception", initMoney)
 	}
 
 	insertSql := fmt.Sprintf("insert into trading_user (`money`) values(%d)", initMoney)
@@ -67,6 +143,9 @@ func (self *TradingMgr)CreateUser(initMoney int32) (int64, error) {
 
 
 func (self *TradingMgr)CreateBorrow(source int64, dest int64, money int32) error {
+	if money < 0 {
+		return CreateError("create borrow error, money[%d] exception", money)
+	}
 	//source向dest借钱 数额 [money]
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
@@ -89,9 +168,9 @@ func (self *TradingMgr)CreateBorrow(source int64, dest int64, money int32) error
 
 	//更新数据库
 	{
-		insertBorrowSql := fmt.Sprintf("insert into borrow_data (`source_id`, `dest_id`, `amount`, `oper_type`) values(%d, %d, %d, %d)", source, dest, money, ot_borrow)
-		updateSql1 := fmt.Sprintf("update trading_user set money=money+%d where id=%d", money, source)
-		updateSql2 := fmt.Sprintf("update trading_user set money=money-%d where id=%d", money, dest)
+		insertBorrowSql := fmt.Sprintf("insert into trading_data (`source_id`, `dest_id`, `amount`, `oper_type`) values(%d, %d, %d, %d)", source, dest, money, ot_borrow)
+		updateSql1 := fmt.Sprintf("update trading_user set money=money-%d where id=%d", money, source)
+		updateSql2 := fmt.Sprintf("update trading_user set money=money+%d where id=%d", money, dest)
 		connect := GetDbMgr().GetDbConnect()
 		Tx, err := connect.Begin()
 		if err != nil {
@@ -134,6 +213,9 @@ func (self *TradingMgr)CreateBorrow(source int64, dest int64, money int32) error
 //添加一笔还钱
 func (self *TradingMgr)CreateRepay(source int64, dest int64, money int32) error {
 	//source给dest还钱 数额 [money]
+	if money < 0 {
+		return CreateError("create repay error, money[%d] exception", money)
+	}
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
@@ -166,7 +248,7 @@ func (self *TradingMgr)CreateRepay(source int64, dest int64, money int32) error 
 	}
 
 	{
-		insertBorrowSql := fmt.Sprintf("insert into borrow_data (`source_id`, `dest_id`, `amount`, `oper_type`) values(%d, %d, %d, %d)", source, dest, money, ot_repay)
+		insertBorrowSql := fmt.Sprintf("insert into trading_data (`source_id`, `dest_id`, `amount`, `oper_type`) values(%d, %d, %d, %d)", source, dest, money, ot_repay)
 		updateSql1 := fmt.Sprintf("update trading_user set money=money-%d where id=%d", money, source)
 		updateSql2 := fmt.Sprintf("update trading_user set money=money+%d where id=%d", money, dest)
 		connect := GetDbMgr().GetDbConnect()

@@ -4,7 +4,7 @@ create table if not exists `trading_user` (
     `id` bigint(20) not null AUTO_INCREMENT,
     `money` int NOT NULL,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 auto_increment=10000 ;
 
 create table if not exists `trading_data` (
   `id` bigint(20) not null AUTO_INCREMENT,

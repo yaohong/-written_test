@@ -9,9 +9,15 @@ import (
 
 func main() {
 	InitGlobalDbMgr()
-	GetDbMgr().Init("root:123456@tcp(127.0.0.1:3306)/trading?charset=utf8")
+	err := GetDbMgr().Init("root:123456@tcp(127.0.0.1:3306)/trading?charset=utf8")
+	if err != nil {
+		log.Fatalln(err)
+	}
 	InitGlobalTradingMgr()
-
+	err = GetTradingMgr().LoadAllByDb()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	http.HandleFunc("/createUser", http_CreateUser)
 	http.HandleFunc("/createBorrow", http_CreateBorrow)
@@ -21,7 +27,7 @@ func main() {
 
 	server := &http.Server{Addr: ":8889", Handler: nil}
 	log.Printf("start server success.\n")
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

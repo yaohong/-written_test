@@ -45,12 +45,12 @@ func http_CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(CreateError("initMoneyJs.Int faied, error = %s", err.Error()))
 	}
-
+	log.Printf("create_user init_money=%d\n", initMoney)
 	userId, err := GetTradingMgr().CreateUser(int32(initMoney))
 	if err != nil {
-		panic(CreateError("CreateUser faied, error = %s", err.Error()))
+		panic(CreateError("CreateUser failed, error = %s", err.Error()))
 	}
-
+	log.Printf("create_user success user_id=%d\n", userId)
 	successJson := simplejson.New()
 	successJson.Set("state", 0)
 
@@ -188,10 +188,10 @@ func http_GetUserInfo(w http.ResponseWriter, r *http.Request) {
 		panic(CreateError("simplejson.NewJson faied, error = %s", err.Error()))
 	}
 
-	sourceIdJs := js.Get("use_id")
+	sourceIdJs := js.Get("user_id")
 	intUserId, err := sourceIdJs.Int()
 	if err != nil {
-		panic(CreateError("sourceIdJs.Int faied, error = %s", err.Error()))
+		panic(CreateError("sourceIdJs.Int %v faied, error = %s", sourceIdJs, err.Error()))
 	}
 
 
@@ -254,18 +254,23 @@ func http_ViewUserRelation(w http.ResponseWriter, r *http.Request) {
 	//查看source给dest借了多少钱，dest给source借了多少钱
 	sourceUser, ok := GetTradingMgr().GetUser(int64(intSourceId))
 	if !ok {
-		panic(CreateError("user_id[%d] not exist", intSourceId))
+		panic(CreateError("source user_id[%d] not exist", intSourceId))
+	}
+
+	_, ok = GetTradingMgr().GetUser(int64(intDestId))
+	if !ok {
+		panic(CreateError("dest_id[%d] not exist", intDestId))
 	}
 
 	//看dest是否给自己借过钱
-	borrowValue, ok := sourceUser.CheckBorrowUser(int32(intDestId))
+	borrowValue, ok := sourceUser.CheckBorrowUser(int64(intDestId))
 	if !ok {
 		//没有给自己借过钱
 		borrowValue = 0
 	}
 
 	//检测我是否给dest借过钱
-	loanValue, ok := sourceUser.CheckLoanUser(int32(intDestId))
+	loanValue, ok := sourceUser.CheckLoanUser(int64(intDestId))
 	if !ok {
 		loanValue = 0
 	}

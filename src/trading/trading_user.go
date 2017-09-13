@@ -45,6 +45,51 @@ func (self *TradingUser)TotalLoan() int32 {
 	return totalValue
 }
 
+//添家一笔借入从DB
+func (self *TradingUser)AddBorrowFromDb(destId int64, money int32) {
+	old, ok := self.allBorrow[destId]
+	if ok {
+		self.allBorrow[destId] = old + money
+	} else {
+		self.allBorrow[destId] = money
+	}
+}
+
+//添加一笔借出从DB
+func (self *TradingUser)AddLoanFromDb (destId int64, money int32)  {
+
+	old, ok := self.allLoan[destId]
+	if ok {
+		self.allLoan[destId] = old + money
+	} else {
+		self.allLoan[destId] = money
+	}
+}
+
+//别人给自己还钱从DB
+func (self *TradingUser)AddGaveMeMoneyFromDb(destId int64, money int32) {
+	loanMoney, ok := self.allLoan[destId]
+	if !ok {
+		self.allLoan[destId] = 0 - money
+	} else {
+		self.allLoan[destId] = loanMoney - money
+	}
+
+}
+
+//给别人还钱
+func (self *TradingUser)AddGiveMoneyToOtherFromDb(destIn int64, money int32) {
+	borrowMoney, ok := self.allBorrow[destIn]
+	if !ok {
+		self.allBorrow[destIn] = 0 - money
+	} else {
+		self.allBorrow[destIn] = borrowMoney - money
+	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
 //添加一笔借入
 func (self *TradingUser)AddBorrow(destId int64, money int32) {
 	old, ok := self.allBorrow[destId]

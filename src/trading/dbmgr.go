@@ -1,5 +1,8 @@
 package main
-import "database/sql"
+import (
+	"database/sql"
+	_ "github.com/go-sql-driver/MySQL"
+)
 
 
 type DbMgr struct {
