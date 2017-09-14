@@ -186,7 +186,75 @@ func (self *TradingUser)handle_AddLoan(v *Cmd_AddLoan) {
 }
 
 func (self *TradingUser)handle_GiveMoneyToOther(v *Cmd_GiveMoneyToOther) {
+	//给别人还钱
+	if self.lock {
+		v.replyCh <- ecode_lock
+		return
+	}
 
+	//目标是否给自己借过钱
+	borrowMoney, ok := self.allBorrow[v.targetId]
+	if !ok || borrowMoney < v.money {
+		//对方没有给自己借过钱
+		v.replyCh <- ecode_20002
+		return
+	}
+
+	//获取流水号
+	newSerialNumber, err := GetTradingMgr().GenerateSerialNumber()
+	if err != nil {
+		log.Printf("generate serialNumber failed, %s\n", err.Error())
+		v.replyCh <- ecode_generate_serial_number_failed
+		return
+	}
+
+	{
+		//更新缓存
+		self.currentMoney -= v.money
+		self.allBorrow[v.targetId] = borrowMoney - v.money
+	}
+
+	err = self.InsertActiveTradingData(newSerialNumber, v.targetId, v.money, ot_repay, 0)
+	if err != nil {
+		//失败了?
+		v.replyCh <- ecode_db_error
+		return
+	}
+
+	//操作DB
+	replyCode := ecode_success
+	//看对方是在本机还是跨机器
+	targetUser ,ok := GetTradingMgr().GetUser(v.targetId)
+	if !ok {
+		//这里就写伪代码了
+		//根据ID或者tagetId所在的地址
+		//发送一个http请求
+		//replyCode = rpc.call(ip, targetUser.GaveMeMoney(newSerialNumber, self.id, v.money)
+	} else {
+		replyCode = targetUser.GaveMeMoney(newSerialNumber, self.id, v.money)
+		if replyCode == ecode_success {
+			//成功了,在数据库更新状态
+			err := self.updateSerialNumberState(newSerialNumber)
+			if err != nil {
+				//更新流水状态失败，依然重试
+				log.Printf("updateSerialNumberState failed, %s\n", err.Error())
+				replyCode = ecode_db_error
+			}
+		}
+
+	}
+
+
+	if replyCode != ecode_success {
+		//失败了,锁定
+		self.lock = true
+
+		//数据发给trading_mgr去重试操作,成功后解锁
+		//伪代码
+	}
+
+
+	v.replyCh <- replyCode
 }
 
 func (self *TradingUser)handle_AddBorrow(v *Cmd_AddBorrow) {

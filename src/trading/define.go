@@ -14,7 +14,7 @@ const (
 
 	ecode_money_not_enough int32 = 1005		//钱不够
 	ecode_20001 = 20001						//没有给对方借过这么多钱
-	ecode_20002 = 20002						//对方没有给我借过这么钱
+	ecode_20002 = 20002						//对方没有给我借过钱
 )
 
 const (

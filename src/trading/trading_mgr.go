@@ -70,15 +70,16 @@ func (self *TradingMgr)loadTradingData(user *TradingUser, mode int32) error {
 				//没有完成的，由mgr继续发起交易
 				self.notCompletedTrading[serialNumber] = NewTradomgData(serialNumber, sourceId, targetId, money, operType)
 				user.lock = true
-			} else {
-				if operType == ot_borrow {
-					//我向dest借钱
-					user.addLoanFromDb(targetId, money)
-				} else {
-					//我向dest还钱
-					user.addGiveMoneyToOtherFromDb(targetId, money)
-				}
 			}
+			//有没有完成都应当加上
+			if operType == ot_borrow {
+				//我向dest借钱
+				user.addLoanFromDb(targetId, money)
+			} else {
+				//我向dest还钱
+				user.addGiveMoneyToOtherFromDb(targetId, money)
+			}
+
 		} else {
 			//被动接受state肯定为1(插入时state就为1)
 

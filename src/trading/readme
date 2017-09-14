@@ -12,7 +12,7 @@
 [3]剩下的几个需求，直接本地都可以获取到
 
 主要代码在 trading_user:handle_AddLoan 和 trading_user:handle_AddBorrow中
-还款的处理和借款的一样
+还款比借款稍微麻烦一些，还款的接收方需要检测是否像还款者借过钱
 用户的钱是由初始化金额+借入-借出+还入-还出
   
   
