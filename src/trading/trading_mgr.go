@@ -4,10 +4,7 @@ import (
 	"fmt"
 )
 
-const (
-	ot_borrow int32 = 0
-	ot_repay int32 = 1
-)
+
 
 var gTradingMgr *TradingMgr = nil
 
@@ -15,7 +12,7 @@ var gTradingMgr *TradingMgr = nil
 type TradingMgr struct {
 	mutex sync.Mutex
 	allTradingUser map[int64] *TradingUser
-
+	notCompletedTrading map[int64] *TradingData
 }
 
 //在main函数里调用
@@ -23,6 +20,7 @@ func InitGlobalTradingMgr() {
 	if gTradingMgr  == nil {
 		gTradingMgr = &TradingMgr {
 			allTradingUser: make(map[int64] *TradingUser),
+			notCompletedTrading: make(map[int64] *TradingData),
 		}
 	}
 }
@@ -30,6 +28,71 @@ func InitGlobalTradingMgr() {
 
 func GetTradingMgr() *TradingMgr {
 	return gTradingMgr
+}
+
+
+func (self *TradingMgr)loadTradingData(user *TradingUser, mode int32) error {
+	var suffix string
+	if mode == md_active {
+		suffix = fmt.Sprintf("active_trading_data where `source_id`=%d", user.id)
+	} else {
+		suffix = fmt.Sprintf("passive_trading_data where `dest_id`=%d", user.id)
+	}
+
+	selectSql := fmt.Sprintf("select serial_number, source_id,target_id,amount,oper_type, state from %s", suffix)
+	rows, err := GetDbMgr().GetDbConnect().Query(selectSql)
+	if err != nil {
+		return err
+	}
+
+	defer rows.Close()
+
+
+	for rows.Next() {
+		var serialNumber int64
+		var sourceId int64
+		var targetId int64
+		var money int32
+		var operType int32
+		var state int32
+		err = rows.Scan(&serialNumber, &sourceId, &targetId, &money, &operType, &state)
+		if err != nil {
+			return err
+		}
+
+		if operType != ot_borrow && operType != ot_repay {
+			return CreateError("operType error ~p", operType)
+		}
+
+		if mode == md_active {
+			//主角是发起方， 有可能没有完成
+			if state == 0 {
+				//没有完成的，由mgr继续发起交易
+				self.notCompletedTrading[serialNumber] = NewTradomgData(serialNumber, sourceId, targetId, money, operType)
+				user.lock = true
+			} else {
+				if operType == ot_borrow {
+					//我向dest借钱
+					user.addLoanFromDb(targetId, money)
+				} else {
+					//我向dest还钱
+					user.addGiveMoneyToOtherFromDb(targetId, money)
+				}
+			}
+		} else {
+			//被动接受state肯定为1(插入时state就为1)
+
+			if operType == ot_borrow {
+				//source给我借钱
+				user.addBorrowFromDb(sourceId, money)
+			} else {
+				//source给我还钱
+				user.addGaveMeMoneyFromDb(sourceId, money)
+			}
+		}
+	}
+
+	return nil
 }
 
 func (self *TradingMgr)LoadAllByDb() error{
@@ -52,55 +115,18 @@ func (self *TradingMgr)LoadAllByDb() error{
 			}
 
 			self.allTradingUser[id]  = NewTradingUser(id, money)
-
 		}
 
 	}
 
 	{
-		selectSql := fmt.Sprintf("select source_id,dest_id,amount,oper_type from trading_data")
-		rows, err := GetDbMgr().GetDbConnect().Query(selectSql)
-		if err != nil {
-			return err
+		for _, v := range self.allTradingUser {
+			//加载交易数据
+			self.loadTradingData(v, md_active)
+			self.loadTradingData(v, md_passive)
+			go v.Loop()
 		}
 
-		defer rows.Close()
-
-
-		for rows.Next() {
-			var sourceId int64
-			var destId int64
-			var money int32
-			var operType int32
-			err = rows.Scan(&sourceId, &destId, &money, &operType)
-			if err != nil {
-				return err
-			}
-
-			if operType != ot_borrow && operType != ot_repay {
-				return CreateError("operType error ~p", operType)
-			}
-
-			sourceUser, ok := self.allTradingUser[sourceId]
-			if !ok {
-				return CreateError("sourceId[%d] not exist", sourceId)
-			}
-
-			destUser, ok := self.allTradingUser[destId]
-			if !ok {
-				return CreateError("destId[%d] not exist", sourceId)
-			}
-
-			if operType == ot_borrow {
-				//source向dest借钱
-				sourceUser.AddLoanFromDb(destId, money)
-				destUser.AddBorrowFromDb(sourceId, money)
-			} else {
-				//source向dest还钱
-				sourceUser.AddGiveMoneyToOtherFromDb(destId, money)
-				destUser.AddGaveMeMoneyFromDb(sourceId, money)
-			}
-		}
 	}
 	return nil
 }
@@ -133,6 +159,7 @@ func (self *TradingMgr)CreateUser(initMoney int32) (int64, error) {
 	}
 
 	newUser := NewTradingUser(newId, initMoney)
+	go newUser.Loop()
 
 	self.mutex.Lock()
 	self.allTradingUser[newId] = newUser
@@ -140,6 +167,24 @@ func (self *TradingMgr)CreateUser(initMoney int32) (int64, error) {
 
 	return newId, nil
 }
+
+
+func (self *TradingMgr)GenerateSerialNumber() (int64, error) {
+	insertSql := fmt.Sprintf("insert into serial_number () values()")
+	result, err := GetDbMgr().GetDbConnect().Exec(insertSql)
+	if err != nil {
+		return 0, err
+	}
+
+	newId, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return newId, nil
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 func (self *TradingMgr)CreateBorrow(source int64, dest int64, money int32) error {
