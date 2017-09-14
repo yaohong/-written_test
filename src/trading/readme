@@ -13,6 +13,7 @@
 
 主要代码在 trading_user:handle_AddLoan 和 trading_user:handle_AddBorrow中
 还款的处理和借款的一样
+用户的钱是由初始化金额+借入-借出+还入-还出
   
   
 接口，所有请求和返回数据都为json 
