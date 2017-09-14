@@ -11,6 +11,8 @@
 [2]A向B还款，A做前置检测(B是否给我借款,查询记录即可)和是否被锁定的检测，之后的流程就和借款一样了
 [3]剩下的几个需求，直接本地都可以获取到
 
+主要代码在 trading_user:handle_AddLoan 和 trading_user:handle_AddBorrow中
+还款的处理和借款的一样
   
   
 接口，所有请求和返回数据都为json 
